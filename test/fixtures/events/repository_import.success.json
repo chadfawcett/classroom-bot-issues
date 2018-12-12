@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "repository": {
+    "name": "assignment-student",
+    "owner": {
+      "login": "organization"
+    }
+  },
+  "installation": {
+    "id": 2
+  }
+}
