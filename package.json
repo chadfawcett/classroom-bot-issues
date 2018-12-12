@@ -15,8 +15,8 @@
   "scripts": {
     "dev": "nodemon",
     "start": "probot run ./index.js",
-    "test": "npm run prettier-check && npm run eslint && jest",
-    "test:watch": "jest --watch --notify --notifyMode=change --coverage",
+    "test": "npm run prettier-check && npm run eslint && LOG_LEVEL=fatal jest",
+    "test:watch": "LOG_LEVEL=fatal jest --watch",
     "eslint": "eslint '**/*.js'",
     "prettier": "prettier --write '**/*.js'",
     "prettier-check": "prettier --list-different '**/*.js'"
