@@ -15,27 +15,29 @@
   "scripts": {
     "dev": "nodemon",
     "start": "probot run ./index.js",
-    "lint": "standard --fix",
-    "test": "jest && standard",
-    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+    "test": "npm run prettier-check && npm run eslint && jest",
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage",
+    "eslint": "eslint '**/*.js'",
+    "prettier": "prettier --write '**/*.js'",
+    "prettier-check": "prettier --list-different '**/*.js'"
   },
   "dependencies": {
     "probot": "^7.2.0"
   },
   "devDependencies": {
+    "@twostoryrobot/eslint-config": "^2.2.0",
+    "@twostoryrobot/prettier-config": "^2.0.1",
+    "eslint": "^5.10.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-jest": "^22.1.2",
     "jest": "^22.4.3",
     "nock": "^10.0.0",
     "nodemon": "^1.17.2",
-    "smee-client": "^1.0.2",
-    "standard": "^10.0.3"
+    "prettier": "^1.15.3",
+    "smee-client": "^1.0.2"
   },
   "engines": {
     "node": ">= 8.3.0"
-  },
-  "standard": {
-    "env": [
-      "jest"
-    ]
   },
   "nodemonConfig": {
     "exec": "npm start",
