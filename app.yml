@@ -1,0 +1,8 @@
+default_events:
+- repository_import
+
+default_permissions:
+  issues: write
+  metadata: read
+
+description: Copies open issues from starter repository to student assignment repositories
