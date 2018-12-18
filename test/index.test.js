@@ -112,4 +112,58 @@ describe('Classroom Bot Issues', () => {
 
     return probot.receive({ name: 'repository_import', payload: customPayload })
   })
+
+  test('starter repo name is set to custom config value', () => {
+    //  Change organization name
+    const customPayload = {
+      ...payload,
+      repository: {
+        ...payload.repository,
+        owner: { ...payload.repository.owner, login: 'config' }
+      }
+    }
+
+    //  Test that we correctly return a test token
+    nock('https://api.github.com')
+      .post(`/app/installations/${customPayload.installation.id}/access_tokens`)
+      .reply(200, { token: 'test' })
+
+    //  Custom config
+    nock('https://api.github.com')
+      .get(
+        `/repos/${customPayload.repository.owner.login}/assignment-${
+          customPayload.sender.login
+        }/contents/.github/config.yml`
+      )
+      .reply(200, {
+        content: new Buffer(
+          'issues:\n  starterName: config-repo-starter'
+        ).toString('base64')
+      })
+
+    //  Receive new issues
+    nock('https://api.github.com')
+      .post(
+        `/repos/${customPayload.repository.owner.login}/assignment-${
+          customPayload.sender.login
+        }/issues`
+      )
+      .times(starterIssues.length)
+      .reply(200)
+
+    //  Confirm starter repo is queried
+    nock('https://api.github.com')
+      .get(
+        `/repos/${
+          customPayload.repository.owner.login
+        }/config-repo-starter/issues`,
+        () => {
+          expect(true).toBeTruthy()
+          return true
+        }
+      )
+      .reply(200, starterIssues)
+
+    return probot.receive({ name: 'repository_import', payload: customPayload })
+  })
 })
