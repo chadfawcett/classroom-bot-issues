@@ -2,7 +2,18 @@ module.exports = app => {
   app.log('Yay, the Classroom Bot Issues App was loaded!')
 
   app.on('repository_import', async context => {
-    const starterName = 'assignment-starter'
+    const {
+      repository: { name: studentRepoName },
+      sender: { login: studentLogin }
+    } = context.payload
+    const config = await context.config('config.yml', { issues: {} })
+
+    //  Starter name is either defined in config, or replaces student name with
+    //  "starter" (eg assignment-student1 -> assignment-starter)
+    const starterName =
+      config.issues.starterName ||
+      studentRepoName.replace(studentLogin, 'starter')
+
     context.log(`Copying issues from ${starterName} to ${context.repo().repo}`)
 
     //  Get all the issues from our starter repo

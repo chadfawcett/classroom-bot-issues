@@ -6,6 +6,9 @@
       "login": "organization"
     }
   },
+  "sender": {
+    "login": "student"
+  },
   "installation": {
     "id": 2
   }

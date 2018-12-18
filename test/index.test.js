@@ -31,6 +31,15 @@ describe('Classroom Bot Issues', () => {
       .post(`/app/installations/${payload.installation.id}/access_tokens`)
       .reply(200, { token: 'test' })
 
+    //  No config
+    nock('https://api.github.com')
+      .get(
+        `/repos/${payload.repository.owner.login}/assignment-${
+          payload.sender.login
+        }/contents/.github/config.yml`
+      )
+      .reply(404, { message: 'Not Found' })
+
     //  Test that issues are created in student repo
     nock('https://api.github.com')
       .post(
@@ -52,5 +61,55 @@ describe('Classroom Bot Issues', () => {
 
     //  Receive a webhook event
     return probot.receive({ name: 'repository_import', payload })
+  })
+
+  test('starter repo name defaults if no config is provided', () => {
+    //  Change organization name
+    const customPayload = {
+      ...payload,
+      repository: {
+        ...payload.repository,
+        owner: { ...payload.repository.owner, login: 'no-config' }
+      }
+    }
+
+    //  Test that we correctly return a test token
+    nock('https://api.github.com')
+      .post(`/app/installations/${customPayload.installation.id}/access_tokens`)
+      .reply(200, { token: 'test' })
+
+    //  No config
+    nock('https://api.github.com')
+      .get(
+        `/repos/${customPayload.repository.owner.login}/assignment-${
+          customPayload.sender.login
+        }/contents/.github/config.yml`
+      )
+      .reply(404, { message: 'Not Found' })
+
+    //  Receive new issues
+    nock('https://api.github.com')
+      .post(
+        `/repos/${customPayload.repository.owner.login}/assignment-${
+          customPayload.sender.login
+        }/issues`
+      )
+      .times(starterIssues.length)
+      .reply(200)
+
+    //  Confirm starter repo is queried
+    nock('https://api.github.com')
+      .get(
+        `/repos/${
+          customPayload.repository.owner.login
+        }/assignment-starter/issues`,
+        () => {
+          expect(true).toBeTruthy()
+          return true
+        }
+      )
+      .reply(200, starterIssues)
+
+    return probot.receive({ name: 'repository_import', payload: customPayload })
   })
 })
