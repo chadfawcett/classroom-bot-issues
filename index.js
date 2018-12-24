@@ -35,4 +35,10 @@ module.exports = app => {
       })
     )
   })
+
+  app.on('error', error => {
+    console.log(
+      `Error occured in "${error.event.name} handler: ${error.stack}"`
+    )
+  })
 }

@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "name": "classroom-bot-issues",
+  "alias": "classroom-bot-issues",
+  "env": {
+    "APP_ID": "@classroom-bot-issues-app-id",
+    "NODE_ENV": "production",
+    "LOG_LEVEL": "trace",
+    "WEBHOOK_SECRET": "@classroom-bot-issues-webhook-secret",
+    "PRIVATE_KEY": "@classroom-bot-issues-private-key"
+  },
+  "builds": [{ "src": "now.js", "use": "@now/node" }],
+  "routes": [{ "src": "/", "dest": "/now.js" }]
+}
