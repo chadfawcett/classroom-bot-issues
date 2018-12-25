@@ -29,4 +29,4 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
-[ISC](LICENSE) © 2018 Chad Fawcett <me@chadf.ca> (https://github.com/chadfawcett/classroom-bot-issues)
+[ISC](LICENSE) © 2018 Chad Fawcett
