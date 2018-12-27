@@ -10,5 +10,5 @@
     "PRIVATE_KEY": "@classroom-bot-issues-private-key"
   },
   "builds": [{ "src": "now.js", "use": "@now/node" }],
-  "routes": [{ "src": "/", "dest": "/now.js" }]
+  "routes": [{ "src": "/.*", "dest": "/now.js" }]
 }
