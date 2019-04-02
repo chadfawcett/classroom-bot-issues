@@ -14,24 +14,50 @@ module.exports = app => {
       config.issues.starterName ||
       studentRepoName.replace(studentLogin, 'starter')
 
-    context.log(`Copying issues from ${starterName} to ${context.repo().repo}`)
-
-    //  Get all the issues from our starter repo
     const starterRepo = context.repo({ repo: starterName })
+    const studentRepo = context.repo()
+
+    //  Copy each issue to student repository
+    context.log(
+      `Copying issues from ${starterRepo.repo} to ${studentRepo.repo}`
+    )
+    //  Get all the issues from our starter repo
     const issues = (await context.github.issues.listForRepo(
       starterRepo
     )).data.filter(i => !i.pull_request) //  Filter out pull requests
 
-    //  Copy each issue to student repository
     await Promise.all(
       issues.map(({ number, title, body }) => {
         context.log.debug(
-          `Copying ${context.repo().owner}/${starterName}#${number} to ${
-            context.repo().owner
-          }/${context.repo().repo}`
+          `Copying ${starterRepo.owner}/${starterRepo.repo}#${number} to ${
+            studentRepo.owner
+          }/${studentRepo.repo}`
         )
 
-        return context.github.issues.create({ ...context.repo(), title, body })
+        return context.github.issues.create({ ...studentRepo, title, body })
+      })
+    )
+
+    //  Copy each pull request to student repository
+    context.log(`Copying PRs from ${starterRepo.repo} to ${studentRepo.repo}`)
+    //  Get all the prs from our starter repo
+    const prs = (await context.github.pullRequests.list(starterRepo)).data
+
+    await Promise.all(
+      prs.map(({ number, title, body, head, base }) => {
+        context.log.debug(
+          `Copying ${starterRepo.owner}/${starterRepo.repo}#${number} to ${
+            studentRepo.owner
+          }/${studentRepo.repo}`
+        )
+
+        return context.github.pullRequests.create({
+          ...studentRepo,
+          title,
+          body,
+          head: head.ref,
+          base: base.ref
+        })
       })
     )
   })
